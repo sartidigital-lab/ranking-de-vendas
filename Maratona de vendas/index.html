@@ -3,20 +3,41 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Maratona de Vendas</title>
+    <title>Maratona de Vendas Allvino</title>
     <meta
       name="description"
-      content="Maratona de vendas com premiação via Pix para representantes que atingirem os gatilhos de faturamento."
+      content="Landing page da Maratona de Vendas Allvino com premiação, regras e ranking de representantes."
     />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Marcellus&family=Source+Sans+3:wght@400;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js" defer></script>
     <style>
       :root {
         color-scheme: light;
-        --page-bg: #f7f2ea;
-        --text: #261f1a;
-        --muted: #5c5148;
-        --accent: #8f2f22;
-        --line: #d8c7b1;
-        --panel: #fffaf3;
+        --page-bg: oklch(0.975 0.008 92);
+        --wine-ink: oklch(0.245 0.045 34);
+        --wine-ink-deep: oklch(0.18 0.035 34);
+        --wine-ink-soft: oklch(0.34 0.04 42);
+        --allvino-red: oklch(0.48 0.16 29);
+        --allvino-red-dark: oklch(0.39 0.13 29);
+        --copper-foil: oklch(0.67 0.095 74);
+        --label-paper: oklch(0.93 0.028 85);
+        --logo-white: oklch(0.985 0 0);
+        --cellar-mist: oklch(0.43 0.02 58);
+        --line-light: oklch(0.67 0.095 74 / 0.28);
+        --line-dark: oklch(0.67 0.095 74 / 0.36);
+        --surface: oklch(0.985 0.006 92);
+        --surface-red: oklch(0.48 0.16 29 / 0.1);
+        --shadow-short: 0 8px 18px oklch(0 0 0 / 0.18);
+        --radius-sm: 4px;
+        --radius-md: 8px;
+        --radius-lg: 12px;
+        --container: min(1180px, calc(100vw - 32px));
+        --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
       }
 
       * {
@@ -30,85 +51,1222 @@
       body {
         margin: 0;
         min-width: 320px;
-        background: var(--page-bg);
-        color: var(--text);
-        font-family: Georgia, "Times New Roman", serif;
-        line-height: 1.6;
+        background:
+          linear-gradient(180deg, oklch(0.245 0.045 34 / 0.93) 0 620px, var(--page-bg) 620px),
+          var(--page-bg);
+        color: var(--wine-ink);
+        font-family: "Source Sans 3", Verdana, sans-serif;
+        line-height: 1.65;
       }
 
-      main {
-        min-height: 100vh;
+      a {
+        color: inherit;
+      }
+
+      img {
+        display: block;
+        max-width: 100%;
+      }
+
+      button {
+        font: inherit;
+      }
+
+      :focus-visible {
+        outline: none;
+        box-shadow: 0 0 0 3px oklch(0.67 0.095 74 / 0.48);
+      }
+
+      .container {
+        width: var(--container);
+        margin-inline: auto;
+      }
+
+      .site-header {
+        position: sticky;
+        top: 0;
+        z-index: 10;
+        background: oklch(0.18 0.035 34 / 0.94);
+        border-bottom: 1px solid var(--line-dark);
+      }
+
+      .nav {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1rem;
+        min-height: 74px;
+      }
+
+      .brand {
+        display: inline-flex;
+        align-items: center;
+        width: 168px;
+        min-height: 48px;
+        overflow: hidden;
+      }
+
+      .brand img {
+        width: 220px;
+        margin-left: -24px;
+      }
+
+      .nav-links {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: flex-end;
+        gap: clamp(0.85rem, 2.2vw, 1.6rem);
+        color: oklch(0.985 0 0 / 0.82);
+        font-size: 0.96rem;
+        font-weight: 700;
+      }
+
+      .nav-links a {
+        text-decoration: none;
+      }
+
+      .nav-links a:hover {
+        color: var(--copper-foil);
+      }
+
+      .button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 46px;
+        border-radius: var(--radius-md);
+        padding: 0.88rem 1.45rem;
+        font-weight: 800;
+        line-height: 1.1;
+        text-decoration: none;
+        transition: background-color 180ms var(--ease-out), color 180ms var(--ease-out), transform 180ms var(--ease-out);
+      }
+
+      .button:hover {
+        transform: translateY(-1px);
+      }
+
+      .button-primary {
+        background: var(--allvino-red);
+        color: var(--logo-white);
+      }
+
+      .button-primary:hover {
+        background: var(--allvino-red-dark);
+      }
+
+      .button-secondary {
+        border: 1px solid var(--line-dark);
+        color: var(--logo-white);
+      }
+
+      .button-secondary:hover {
+        background: oklch(0.67 0.095 74 / 0.14);
+      }
+
+      .hero {
+        position: relative;
+        overflow: hidden;
+        padding: clamp(3rem, 7vw, 6.5rem) 0 clamp(3rem, 8vw, 7rem);
+        color: var(--logo-white);
+      }
+
+      .hero::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background:
+          linear-gradient(90deg, oklch(0.18 0.035 34 / 0.96), oklch(0.245 0.045 34 / 0.82) 56%, oklch(0.245 0.045 34 / 0.36)),
+          url("https://images.unsplash.com/photo-1506377247377-2a5b3b417ebb?auto=format&fit=crop&w=1800&q=82") center / cover;
+        z-index: -2;
+      }
+
+      .hero::after {
+        content: "";
+        position: absolute;
+        right: -10vw;
+        bottom: -12rem;
+        width: min(52vw, 680px);
+        aspect-ratio: 1;
+        border-radius: 50%;
+        background: radial-gradient(circle, oklch(0.67 0.095 74 / 0.22), transparent 68%);
+        z-index: -1;
+      }
+
+      .hero-grid {
         display: grid;
-        place-items: center;
-        padding: clamp(2rem, 7vw, 6rem) 1rem;
+        grid-template-columns: minmax(0, 1.05fr) minmax(300px, 0.95fr);
+        align-items: center;
+        gap: clamp(2.25rem, 5vw, 5rem);
       }
 
-      .content {
-        width: min(760px, 100%);
-        padding: clamp(1.5rem, 5vw, 3rem);
-        background: var(--panel);
-        border: 1px solid var(--line);
+      .campaign-label {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.75rem;
+        margin: 0 0 1.2rem;
+        color: var(--copper-foil);
+        font-size: 0.84rem;
+        font-weight: 800;
+        letter-spacing: 0.08em;
+        line-height: 1.2;
+        text-transform: uppercase;
+      }
+
+      .campaign-label::before {
+        content: "";
+        width: 36px;
+        height: 1px;
+        background: currentColor;
+      }
+
+      h1,
+      h2,
+      h3 {
+        font-family: Marcellus, Georgia, serif;
+        font-weight: 400;
+        text-wrap: balance;
       }
 
       h1 {
+        max-width: 11ch;
         margin: 0;
-        color: var(--accent);
-        font-size: clamp(2.75rem, 10vw, 5rem);
-        font-weight: 400;
-        line-height: 0.98;
+        font-size: clamp(3rem, 10vw, 5.75rem);
+        line-height: 0.95;
+        letter-spacing: -0.025em;
       }
 
-      p {
-        margin: 1.5rem 0 0;
-        color: var(--muted);
-        font-size: clamp(1.08rem, 2.5vw, 1.35rem);
+      .hero-copy {
+        max-width: 62ch;
+        margin: 1.6rem 0 0;
+        color: oklch(0.985 0 0 / 0.86);
+        font-size: clamp(1.08rem, 2vw, 1.25rem);
+        text-wrap: pretty;
       }
 
-      h2 {
-        margin: 2.5rem 0 1rem;
-        color: var(--accent);
-        font-size: 1rem;
+      .hero-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.8rem;
+        margin-top: 2rem;
+      }
+
+      .hero-facts {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 1px;
+        max-width: 680px;
+        margin-top: 2.4rem;
+        overflow: hidden;
+        border: 1px solid var(--line-dark);
+        border-radius: var(--radius-lg);
+        background: var(--line-dark);
+      }
+
+      .hero-fact {
+        min-height: 98px;
+        padding: 1rem;
+        background: oklch(0.18 0.035 34 / 0.78);
+      }
+
+      .hero-fact strong {
+        display: block;
+        color: var(--logo-white);
+        font-size: clamp(1.18rem, 2vw, 1.55rem);
+        line-height: 1.05;
+      }
+
+      .hero-fact span {
+        display: block;
+        margin-top: 0.35rem;
+        color: oklch(0.985 0 0 / 0.68);
+        font-size: 0.9rem;
+      }
+
+      .bottle-stage {
+        position: relative;
+        min-height: 520px;
+      }
+
+      .bottle-stage::before {
+        content: "";
+        position: absolute;
+        inset: auto 5% 0;
+        height: 68%;
+        border: 1px solid var(--line-dark);
+        border-radius: var(--radius-lg);
+        background: linear-gradient(160deg, oklch(0.18 0.035 34 / 0.42), oklch(0.48 0.16 29 / 0.2));
+      }
+
+      .bottle-stage img {
+        position: absolute;
+        bottom: 0;
+        width: min(42vw, 255px);
+        max-height: 520px;
+        object-fit: contain;
+        filter: drop-shadow(0 16px 18px oklch(0 0 0 / 0.34));
+      }
+
+      .bottle-stage .secondary {
+        left: 6%;
+        width: min(34vw, 210px);
+        opacity: 0.88;
+      }
+
+      .bottle-stage .primary {
+        right: 10%;
+        z-index: 2;
+      }
+
+      .finish-note {
+        position: absolute;
+        right: 0;
+        top: 10%;
+        width: min(240px, 48vw);
+        padding: 1rem;
+        border: 1px solid var(--line-dark);
+        border-radius: var(--radius-md);
+        background: var(--label-paper);
+        color: var(--wine-ink);
+      }
+
+      .finish-note strong {
+        display: block;
+        color: var(--allvino-red);
+        font-size: 1.2rem;
+        line-height: 1.1;
+      }
+
+      .finish-note span {
+        display: block;
+        margin-top: 0.35rem;
+        color: var(--wine-ink-soft);
+        font-size: 0.95rem;
+      }
+
+      .section {
+        padding: clamp(3.5rem, 8vw, 7rem) 0;
+      }
+
+      .section-heading {
+        display: flex;
+        align-items: end;
+        justify-content: space-between;
+        gap: 2rem;
+        margin-bottom: clamp(1.8rem, 5vw, 3.5rem);
+      }
+
+      .section-heading h2 {
+        max-width: 13ch;
+        margin: 0;
+        font-size: clamp(2.2rem, 5vw, 4rem);
+        line-height: 1.02;
+        letter-spacing: -0.015em;
+      }
+
+      .section-heading p {
+        max-width: 54ch;
+        margin: 0;
+        color: var(--cellar-mist);
+        font-size: 1.06rem;
+        text-wrap: pretty;
+      }
+
+      .prize-layout {
+        display: grid;
+        grid-template-columns: minmax(0, 1.2fr) minmax(280px, 0.8fr);
+        gap: 1px;
+        overflow: hidden;
+        border: 1px solid var(--line-light);
+        border-radius: var(--radius-lg);
+        background: var(--line-light);
+      }
+
+      .prize-panel {
+        display: grid;
+        align-content: space-between;
+        min-height: 360px;
+        padding: clamp(1.4rem, 4vw, 3rem);
+        background: var(--wine-ink);
+        color: var(--logo-white);
+      }
+
+      .prize-panel:nth-child(2) {
+        min-height: auto;
+        background: var(--surface);
+        color: var(--wine-ink);
+      }
+
+      .prize-position {
+        margin: 0;
+        color: var(--copper-foil);
+        font-size: 0.88rem;
+        font-weight: 800;
         letter-spacing: 0.08em;
         text-transform: uppercase;
       }
 
-      ol {
-        display: grid;
-        gap: 1rem;
-        margin: 0;
-        padding-left: 1.25rem;
-        color: var(--text);
-        font-size: clamp(1rem, 2vw, 1.15rem);
+      .prize-panel h3 {
+        max-width: 12ch;
+        margin: 1.25rem 0 0;
+        font-size: clamp(2rem, 5vw, 3.8rem);
+        line-height: 1;
       }
 
-      strong {
-        color: var(--accent);
+      .prize-panel p {
+        max-width: 56ch;
+        margin: 1.2rem 0 0;
+        color: oklch(0.985 0 0 / 0.76);
+      }
+
+      .prize-panel:nth-child(2) p {
+        color: var(--cellar-mist);
+      }
+
+      .prize-amount {
+        display: inline-flex;
+        width: fit-content;
+        margin-top: 2rem;
+        border-radius: var(--radius-md);
+        background: var(--allvino-red);
+        color: var(--logo-white);
+        padding: 0.75rem 1rem;
+        font-size: clamp(1.2rem, 3vw, 1.8rem);
+        font-weight: 900;
+        line-height: 1.1;
+      }
+
+      .rules-band {
+        background: var(--wine-ink-deep);
+        color: var(--logo-white);
+      }
+
+      .rules-grid {
+        display: grid;
+        grid-template-columns: minmax(260px, 0.85fr) minmax(0, 1.15fr);
+        gap: clamp(2rem, 5vw, 4rem);
+        align-items: start;
+      }
+
+      .rules-grid h2 {
+        margin: 0;
+        font-size: clamp(2.2rem, 5vw, 4rem);
+        line-height: 1.03;
+      }
+
+      .rules-grid p {
+        margin: 1.1rem 0 0;
+        color: oklch(0.985 0 0 / 0.7);
+      }
+
+      .rules-list {
+        display: grid;
+        gap: 1px;
+        margin: 0;
+        padding: 0;
+        list-style: none;
+        overflow: hidden;
+        border: 1px solid var(--line-dark);
+        border-radius: var(--radius-lg);
+        background: var(--line-dark);
+      }
+
+      .rules-list li {
+        display: grid;
+        grid-template-columns: auto 1fr;
+        gap: 1rem;
+        align-items: start;
+        padding: clamp(1rem, 3vw, 1.35rem);
+        background: oklch(0.245 0.045 34 / 0.84);
+      }
+
+      .rule-number {
+        display: grid;
+        place-items: center;
+        width: 34px;
+        height: 34px;
+        border-radius: 50%;
+        background: var(--copper-foil);
+        color: var(--wine-ink);
+        font-weight: 900;
+        line-height: 1;
+      }
+
+      .rules-list strong {
+        color: var(--logo-white);
+      }
+
+      .rules-list span {
+        display: block;
+        color: oklch(0.985 0 0 / 0.74);
+      }
+
+      .ranking-shell {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) minmax(260px, 0.36fr);
+        gap: clamp(1.5rem, 4vw, 3rem);
+        align-items: start;
+      }
+
+      .ranking-panel {
+        overflow: hidden;
+        border: 1px solid var(--line-light);
+        border-radius: var(--radius-lg);
+        background: var(--surface);
+      }
+
+      .ranking-topbar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1rem;
+        padding: clamp(1.1rem, 3vw, 1.6rem);
+        border-bottom: 1px solid var(--line-light);
+      }
+
+      .ranking-topbar h3 {
+        margin: 0;
+        font-size: clamp(1.6rem, 3vw, 2.2rem);
+        line-height: 1.05;
+      }
+
+      .ranking-status {
+        display: inline-flex;
+        align-items: center;
+        min-height: 34px;
+        border-radius: var(--radius-sm);
+        background: var(--surface-red);
+        color: var(--allvino-red-dark);
+        padding: 0.42rem 0.7rem;
+        font-size: 0.9rem;
+        font-weight: 800;
+      }
+
+      .ranking-list {
+        display: grid;
+        gap: 1px;
+        margin: 0;
+        padding: 0;
+        list-style: none;
+        background: var(--line-light);
+      }
+
+      .ranking-item {
+        display: grid;
+        grid-template-columns: auto minmax(0, 1fr) auto;
+        gap: clamp(0.8rem, 2vw, 1.2rem);
+        align-items: center;
+        padding: clamp(1rem, 2.5vw, 1.45rem);
+        background: var(--surface);
+      }
+
+      .rank-position {
+        display: grid;
+        place-items: center;
+        width: 42px;
+        height: 42px;
+        border-radius: 50%;
+        background: var(--label-paper);
+        color: var(--wine-ink);
+        font-weight: 900;
+        font-variant-numeric: tabular-nums;
+      }
+
+      .ranking-item:first-child .rank-position {
+        background: var(--copper-foil);
+      }
+
+      .rank-main {
+        display: grid;
+        gap: 0.55rem;
+      }
+
+      .rank-row {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        gap: 0.5rem 1rem;
+      }
+
+      .rank-name {
+        color: var(--wine-ink);
+        font-size: 1.2rem;
+        font-weight: 900;
+        line-height: 1.1;
+      }
+
+      .rank-value {
+        color: var(--allvino-red);
+        font-size: 1.08rem;
+        font-weight: 900;
+        font-variant-numeric: tabular-nums;
+      }
+
+      .progress-track {
+        overflow: hidden;
+        height: 9px;
+        border-radius: var(--radius-sm);
+        background: oklch(0.245 0.045 34 / 0.1);
+      }
+
+      .progress-bar {
+        display: block;
+        width: var(--progress);
+        height: 100%;
+        background: linear-gradient(90deg, var(--allvino-red), var(--copper-foil));
+        border-radius: inherit;
+      }
+
+      .rank-note {
+        margin: 0;
+        color: var(--cellar-mist);
+        font-size: 0.92rem;
+      }
+
+      .rank-badge {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 118px;
+        border: 1px solid var(--line-light);
+        border-radius: var(--radius-md);
+        padding: 0.58rem 0.7rem;
+        color: var(--wine-ink-soft);
+        font-size: 0.86rem;
+        font-weight: 800;
+        text-align: center;
+      }
+
+      .ranking-guide {
+        display: grid;
+        gap: 1px;
+        overflow: hidden;
+        border: 1px solid var(--line-light);
+        border-radius: var(--radius-lg);
+        background: var(--line-light);
+      }
+
+      .guide-item {
+        padding: 1.2rem;
+        background: var(--wine-ink);
+        color: var(--logo-white);
+      }
+
+      .guide-item:nth-child(2) {
+        background: var(--allvino-red);
+      }
+
+      .guide-item strong {
+        display: block;
+        font-size: clamp(1.45rem, 3vw, 2rem);
+        line-height: 1.05;
+      }
+
+      .guide-item span {
+        display: block;
+        margin-top: 0.45rem;
+        color: oklch(0.985 0 0 / 0.72);
+      }
+
+      .site-footer {
+        padding: 2rem 0;
+        border-top: 1px solid var(--line-light);
+        color: var(--cellar-mist);
+      }
+
+      .footer-row {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        gap: 1rem;
+      }
+
+      .footer-copy {
+        display: grid;
+        gap: 0.15rem;
+      }
+
+      .footer-copy span {
+        line-height: 1.35;
+      }
+
+      .ranking-import {
+        width: min(420px, 100%);
+        border: 1px solid var(--line-light);
+        border-radius: var(--radius-md);
+        background: var(--surface);
+      }
+
+      .ranking-import summary {
+        min-height: 42px;
+        cursor: pointer;
+        padding: 0.65rem 0.85rem;
+        color: var(--wine-ink);
+        font-weight: 800;
+        list-style-position: inside;
+      }
+
+      .ranking-import summary::marker {
+        color: var(--copper-foil);
+      }
+
+      .import-content {
+        display: grid;
+        gap: 0.8rem;
+        padding: 0 0.85rem 0.85rem;
+      }
+
+      .import-help,
+      .import-status {
+        margin: 0;
+        color: var(--cellar-mist);
+        font-size: 0.92rem;
+        line-height: 1.45;
+      }
+
+      .import-status.is-error {
+        color: var(--allvino-red-dark);
+      }
+
+      .import-status.is-success {
+        color: oklch(0.38 0.1 145);
+      }
+
+      .file-input {
+        width: 100%;
+        border: 1px solid var(--line-light);
+        border-radius: var(--radius-sm);
+        background: var(--logo-white);
+        color: var(--wine-ink);
+        padding: 0.72rem;
+        font: inherit;
+      }
+
+      .import-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.65rem;
+      }
+
+      .footer-button {
+        min-height: 38px;
+        border: 1px solid var(--line-light);
+        border-radius: var(--radius-sm);
+        background: transparent;
+        color: var(--wine-ink);
+        cursor: pointer;
+        padding: 0.55rem 0.75rem;
+        font-weight: 800;
+      }
+
+      .footer-button:hover {
+        border-color: var(--copper-foil);
+      }
+
+      @media (max-width: 900px) {
+        .hero-grid,
+        .prize-layout,
+        .rules-grid,
+        .ranking-shell {
+          grid-template-columns: 1fr;
+        }
+
+        .bottle-stage {
+          min-height: 440px;
+        }
+
+        .section-heading {
+          display: grid;
+        }
+      }
+
+      @media (max-width: 680px) {
+        .nav {
+          align-items: flex-start;
+          flex-direction: column;
+          padding: 0.85rem 0;
+        }
+
+        .nav-links {
+          justify-content: flex-start;
+        }
+
+        .hero-facts {
+          grid-template-columns: 1fr;
+        }
+
+        .bottle-stage {
+          min-height: 380px;
+        }
+
+        .bottle-stage .secondary {
+          left: 0;
+          width: 42vw;
+        }
+
+        .bottle-stage .primary {
+          right: 0;
+          width: 50vw;
+        }
+
+        .finish-note {
+          top: 0;
+          width: min(220px, 64vw);
+        }
+
+        .ranking-topbar,
+        .ranking-item {
+          grid-template-columns: 1fr;
+        }
+
+        .ranking-item {
+          align-items: start;
+        }
+
+        .rank-badge {
+          width: 100%;
+        }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        *,
+        *::before,
+        *::after {
+          scroll-behavior: auto !important;
+          transition-duration: 0.01ms !important;
+        }
       }
     </style>
   </head>
   <body>
-    <main>
-      <section class="content" aria-labelledby="title">
-        <h1 id="title">Maratona de vendas</h1>
-        <p>
-          Aumente suas vendas durante o último semestre do ano e ganhe uma premiação via PIX, direto na sua conta. Confira o regulamento.
-        </p>
+    <header class="site-header">
+      <nav class="nav container" aria-label="Navegação principal">
+        <a class="brand" href="#topo" aria-label="Allvino - Maratona de Vendas">
+          <img src="assets/allvino-logo-white.original.png" alt="Allvino" />
+        </a>
+        <div class="nav-links" aria-label="Seções da página">
+          <a href="#premiacao">Premiação</a>
+          <a href="#regras">Regras</a>
+          <a href="#ranking">Ranking</a>
+        </div>
+      </nav>
+    </header>
 
-        <h2>Regras</h2>
-        <ol>
-          <li>
-            <strong>1º Lugar:</strong> Vender no acumulado de 01/07/2026 até 31/12/2026 o total: R$ 480.000,00.
-            Premiação: R$ 10.000,00 no Pix.
-          </li>
-          <li>
-            <strong>2º Lugar:</strong> Vender no acumulado de 01/07/2026 até 31/12/2026 o total: R$ 240.000,00.
-            Premiação: R$ 5.000,00 no Pix.
-          </li>
-          <li>Para ativar a premiação, o representante deverá atingir o gatilho, que é a linha de chegada.</li>
-          <li>O representante que atingir um dos gatilhos primeiro, ganha.</li>
-          <li>As premiações não são acumulativas.</li>
-        </ol>
+    <main id="topo">
+      <section class="hero" aria-labelledby="hero-title">
+        <div class="hero-grid container">
+          <div>
+            <p class="campaign-label">01/07/2026 a 31/12/2026</p>
+            <h1 id="hero-title">Maratona de vendas</h1>
+            <p class="hero-copy">
+              Aumente suas vendas durante o último semestre do ano e dispute uma premiação via Pix, direto na sua conta.
+              Quem atingir primeiro um dos gatilhos cruza a linha de chegada.
+            </p>
+            <div class="hero-actions">
+              <a class="button button-primary" href="#ranking">Ver ranking</a>
+              <a class="button button-secondary" href="#regras">Conferir regras</a>
+            </div>
+            <div class="hero-facts" aria-label="Resumo da campanha">
+              <div class="hero-fact">
+                <strong>R$ 480 mil</strong>
+                <span>gatilho do 1º lugar</span>
+              </div>
+              <div class="hero-fact">
+                <strong>R$ 240 mil</strong>
+                <span>gatilho do 2º lugar</span>
+              </div>
+              <div class="hero-fact">
+                <strong>Pix</strong>
+                <span>premiação direta em conta</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="bottle-stage" aria-label="Vinhos do portfólio Allvino">
+            <img class="secondary" src="assets/casa-del-puente-malbec.png" alt="Casa del Puente Premium Malbec" />
+            <img class="primary" src="assets/hinojosa-malbec.png" alt="Hinojosa Gran Reserva Malbec 2022" />
+            <div class="finish-note">
+              <strong>Linha de chegada</strong>
+              <span>O primeiro representante a bater o gatilho leva a premiação correspondente.</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="premiacao" aria-labelledby="premiacao-title">
+        <div class="container">
+          <div class="section-heading">
+            <h2 id="premiacao-title">Premiação da maratona</h2>
+            <p>
+              Dois gatilhos, duas recompensas e uma regra simples: vender no acumulado do período e chegar primeiro.
+              As premiações não são acumulativas.
+            </p>
+          </div>
+          <div class="prize-layout">
+            <article class="prize-panel">
+              <div>
+                <p class="prize-position">1º lugar</p>
+                <h3>Gatilho de R$ 480.000,00</h3>
+                <p>
+                  Vender no acumulado de 01/07/2026 até 31/12/2026 o total de R$ 480.000,00.
+                </p>
+              </div>
+              <strong class="prize-amount">R$ 10.000,00 no Pix</strong>
+            </article>
+            <article class="prize-panel">
+              <div>
+                <p class="prize-position">2º lugar</p>
+                <h3>Gatilho de R$ 240.000,00</h3>
+                <p>
+                  Vender no acumulado de 01/07/2026 até 31/12/2026 o total de R$ 240.000,00.
+                </p>
+              </div>
+              <strong class="prize-amount">R$ 5.000,00 no Pix</strong>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section class="section rules-band" id="regras" aria-labelledby="regras-title">
+        <div class="rules-grid container">
+          <div>
+            <h2 id="regras-title">Regras para ativar a premiação</h2>
+            <p>
+              A corrida considera o faturamento acumulado no período da campanha. O ranking serve para acompanhar a
+              distância de cada representante até a linha de chegada.
+            </p>
+          </div>
+          <ol class="rules-list">
+            <li>
+              <span class="rule-number">1</span>
+              <span><strong>Período válido:</strong> vendas acumuladas de 01/07/2026 até 31/12/2026.</span>
+            </li>
+            <li>
+              <span class="rule-number">2</span>
+              <span><strong>Ativação:</strong> o representante precisa atingir um dos gatilhos, que é a linha de chegada.</span>
+            </li>
+            <li>
+              <span class="rule-number">3</span>
+              <span><strong>Critério de vitória:</strong> o representante que atingir um dos gatilhos primeiro, ganha.</span>
+            </li>
+            <li>
+              <span class="rule-number">4</span>
+              <span><strong>Acúmulo:</strong> as premiações não são acumulativas.</span>
+            </li>
+          </ol>
+        </div>
+      </section>
+
+      <section class="section" id="ranking" aria-labelledby="ranking-title">
+        <div class="container">
+          <div class="section-heading">
+            <h2 id="ranking-title">Ranking de vendas</h2>
+            <p>
+              Acompanhe o faturamento acumulado dos representantes e a distância de cada um até os gatilhos da
+              premiação.
+            </p>
+          </div>
+          <div class="ranking-shell">
+            <section class="ranking-panel" aria-label="Ranking de representantes">
+              <div class="ranking-topbar">
+                <h3>Representantes</h3>
+                <span class="ranking-status" id="ranking-status">Aguardando atualização oficial</span>
+              </div>
+              <ol class="ranking-list" id="ranking-list"></ol>
+            </section>
+            <aside class="ranking-guide" aria-label="Gatilhos da campanha">
+              <div class="guide-item">
+                <strong>R$ 480 mil</strong>
+                <span>alvo para disputar R$ 10.000,00 no Pix</span>
+              </div>
+              <div class="guide-item">
+                <strong>R$ 240 mil</strong>
+                <span>alvo para disputar R$ 5.000,00 no Pix</span>
+              </div>
+            </aside>
+          </div>
+        </div>
       </section>
     </main>
+
+    <footer class="site-footer">
+      <div class="footer-row container">
+        <div class="footer-copy">
+          <span>Allvino · Maratona de Vendas 2026</span>
+          <span>Faturamento acumulado de 01/07/2026 a 31/12/2026</span>
+        </div>
+        <details class="ranking-import">
+          <summary>Atualizar ranking</summary>
+          <div class="import-content">
+            <p class="import-help">
+              Importe uma planilha com as colunas <strong>Representante</strong> e <strong>Valor</strong> ou <strong>Faturamento</strong>.
+            </p>
+            <input class="file-input" id="ranking-file" type="file" accept=".xlsx,.xls,.csv,text/csv" />
+            <div class="import-actions">
+              <button class="footer-button" type="button" id="clear-ranking">Limpar atualização</button>
+            </div>
+            <p class="import-status" id="import-status" role="status">Pronto para receber a planilha.</p>
+          </div>
+        </details>
+      </div>
+    </footer>
+
+    <script>
+      const defaultRepresentatives = [
+        { name: "Karlla", total: 0 },
+        { name: "João César", total: 0 },
+        { name: "Ricardo Barros", total: 0 },
+        { name: "Bruno", total: 0 }
+      ];
+
+      let representatives = [...defaultRepresentatives];
+      const firstGoal = 480000;
+      const secondGoal = 240000;
+      const storageKey = "allvino-marathon-ranking-v2";
+      const nameAliases = new Map([
+        ["karlla", "Karlla"],
+        ["joao cesar", "João César"],
+        ["joao césar", "João César"],
+        ["joão cesar", "João César"],
+        ["joão césar", "João César"],
+        ["ricardo barros", "Ricardo Barros"],
+        ["bruno", "Bruno"]
+      ]);
+      const currency = new Intl.NumberFormat("pt-BR", {
+        style: "currency",
+        currency: "BRL",
+        maximumFractionDigits: 2
+      });
+
+      const elements = {
+        rankingStatus: document.querySelector("#ranking-status"),
+        rankingList: document.querySelector("#ranking-list"),
+        fileInput: document.querySelector("#ranking-file"),
+        clearButton: document.querySelector("#clear-ranking"),
+        importStatus: document.querySelector("#import-status")
+      };
+
+      function setImportStatus(message, type = "default") {
+        elements.importStatus.textContent = message;
+        elements.importStatus.classList.toggle("is-error", type === "error");
+        elements.importStatus.classList.toggle("is-success", type === "success");
+      }
+
+      function normalizeText(value) {
+        return String(value || "")
+          .trim()
+          .toLowerCase()
+          .normalize("NFD")
+          .replace(/[\u0300-\u036f]/g, "")
+          .replace(/\s+/g, " ");
+      }
+
+      function displayName(value) {
+        const raw = String(value || "").trim();
+        return nameAliases.get(normalizeText(raw)) || null;
+      }
+
+      function parseCurrency(value) {
+        if (typeof value === "number") return Number.isFinite(value) ? value : 0;
+        const text = String(value || "").trim();
+        if (!text) return 0;
+        const cleaned = text
+          .replace(/R\$/gi, "")
+          .replace(/\s/g, "")
+          .replace(/\./g, "")
+          .replace(",", ".");
+        const parsed = Number.parseFloat(cleaned);
+        return Number.isFinite(parsed) ? parsed : 0;
+      }
+
+      function findColumn(row, candidates) {
+        return Object.keys(row).find((key) => candidates.includes(normalizeText(key)));
+      }
+
+      function parseCsv(text) {
+        const rows = [];
+        let current = "";
+        let row = [];
+        let insideQuotes = false;
+
+        for (let index = 0; index < text.length; index += 1) {
+          const char = text[index];
+          const next = text[index + 1];
+
+          if (char === '"' && next === '"' && insideQuotes) {
+            current += '"';
+            index += 1;
+          } else if (char === '"') {
+            insideQuotes = !insideQuotes;
+          } else if ((char === "," || char === ";") && !insideQuotes) {
+            row.push(current);
+            current = "";
+          } else if ((char === "\n" || char === "\r") && !insideQuotes) {
+            if (char === "\r" && next === "\n") index += 1;
+            row.push(current);
+            if (row.some((cell) => cell.trim())) rows.push(row);
+            row = [];
+            current = "";
+          } else {
+            current += char;
+          }
+        }
+
+        row.push(current);
+        if (row.some((cell) => cell.trim())) rows.push(row);
+        if (rows.length < 2) return [];
+
+        const headers = rows[0].map((cell) => cell.trim());
+        return rows.slice(1).map((cells) => {
+          const record = {};
+          headers.forEach((header, index) => {
+            record[header] = cells[index] || "";
+          });
+          return record;
+        });
+      }
+
+      function rowsToRepresentatives(rows) {
+        const totals = new Map(defaultRepresentatives.map((item) => [item.name, 0]));
+        const unknown = new Set();
+        let imported = 0;
+        let ignored = 0;
+
+        rows.forEach((row) => {
+          const representativeColumn = findColumn(row, ["representante", "vendedor", "consultor", "nome"]);
+          const valueColumn = findColumn(row, ["valor", "faturamento", "venda", "vendas", "total", "receita", "valor venda"]);
+          const representative = displayName(row[representativeColumn]);
+          const amount = parseCurrency(row[valueColumn]);
+
+          if (!representative || amount <= 0) {
+            if (!representative && row[representativeColumn]) unknown.add(String(row[representativeColumn]).trim());
+            ignored += 1;
+            return;
+          }
+
+          totals.set(representative, (totals.get(representative) || 0) + amount);
+          imported += 1;
+        });
+
+        return {
+          representatives: defaultRepresentatives.map((item) => ({ ...item, total: totals.get(item.name) || 0 })),
+          imported,
+          ignored,
+          unknown: [...unknown]
+        };
+      }
+
+      function saveRanking(nextRepresentatives) {
+        representatives = nextRepresentatives;
+        localStorage.setItem(storageKey, JSON.stringify({ representatives, updatedAt: new Date().toISOString() }));
+        renderRanking();
+      }
+
+      function loadRanking() {
+        try {
+          const stored = JSON.parse(localStorage.getItem(storageKey) || "null");
+          if (Array.isArray(stored?.representatives)) {
+            representatives = defaultRepresentatives.map((item) => {
+              const storedItem = stored.representatives.find((candidate) => candidate.name === item.name);
+              return { ...item, total: parseCurrency(storedItem?.total) };
+            });
+          }
+        } catch {
+          representatives = [...defaultRepresentatives];
+        }
+      }
+
+      async function handleFile(file) {
+        if (!file) return;
+        const extension = file.name.split(".").pop().toLowerCase();
+        let rows = [];
+
+        if (extension === "csv") {
+          rows = parseCsv(await file.text());
+        } else {
+          if (!window.XLSX) {
+            setImportStatus("O leitor de Excel ainda está carregando. Tente novamente em alguns segundos.", "error");
+            return;
+          }
+
+          const buffer = await file.arrayBuffer();
+          const workbook = window.XLSX.read(buffer, { type: "array", cellDates: true });
+          const sheet = workbook.Sheets[workbook.SheetNames[0]];
+          rows = window.XLSX.utils.sheet_to_json(sheet, { defval: "" });
+        }
+
+        const result = rowsToRepresentatives(rows);
+        if (!result.imported) {
+          setImportStatus("Nenhum valor válido foi encontrado. Confira as colunas Representante e Valor/Faturamento.", "error");
+          return;
+        }
+
+        saveRanking(result.representatives);
+        const notes = [`${result.imported} linhas importadas`];
+        if (result.ignored) notes.push(`${result.ignored} linhas ignoradas`);
+        if (result.unknown.length) notes.push(`não reconhecidos: ${result.unknown.join(", ")}`);
+        setImportStatus(`${notes.join(". ")}.`, "success");
+      }
+
+      function getBadge(total) {
+        if (total >= firstGoal) return "Gatilho 1º lugar";
+        if (total >= secondGoal) return "Gatilho 2º lugar";
+        return `Faltam ${currency.format(Math.max(secondGoal - total, 0))}`;
+      }
+
+      function renderRanking() {
+        const sorted = representatives
+          .map((item, order) => ({ ...item, order }))
+          .sort((a, b) => b.total - a.total || a.order - b.order);
+        const hasSales = sorted.some((item) => item.total > 0);
+        const target = firstGoal;
+
+        elements.rankingStatus.textContent = hasSales
+          ? "Atualizado com totais informados"
+          : "Aguardando atualização oficial";
+
+        elements.rankingList.innerHTML = sorted
+          .map((item, index) => {
+            const progress = Math.min((item.total / target) * 100, 100);
+            const nextGoal = item.total >= secondGoal ? "em direção ao 1º lugar" : "em direção ao 2º lugar";
+            return `
+              <li class="ranking-item">
+                <span class="rank-position">${index + 1}</span>
+                <div class="rank-main">
+                  <div class="rank-row">
+                    <strong class="rank-name">${item.name}</strong>
+                    <span class="rank-value">${currency.format(item.total)}</span>
+                  </div>
+                  <div class="progress-track" aria-hidden="true">
+                    <span class="progress-bar" style="--progress: ${progress}%"></span>
+                  </div>
+                  <p class="rank-note">${progress.toFixed(1).replace(".", ",")}% ${nextGoal}</p>
+                </div>
+                <span class="rank-badge">${getBadge(item.total)}</span>
+              </li>
+            `;
+          })
+          .join("");
+      }
+
+      elements.fileInput.addEventListener("change", (event) => {
+        handleFile(event.target.files[0]).catch((error) => {
+          console.error(error);
+          setImportStatus("Não consegui ler a planilha. Confira o arquivo e tente novamente.", "error");
+        });
+      });
+
+      elements.clearButton.addEventListener("click", () => {
+        localStorage.removeItem(storageKey);
+        representatives = [...defaultRepresentatives];
+        renderRanking();
+        elements.fileInput.value = "";
+        setImportStatus("Atualização local removida.", "success");
+      });
+
+      loadRanking();
+      renderRanking();
+    </script>
   </body>
 </html>
