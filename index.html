@@ -6,37 +6,32 @@
     <title>Maratona de Vendas Allvino</title>
     <meta
       name="description"
-      content="Landing page da Maratona de Vendas Allvino com premiação, regras e ranking de representantes."
+      content="Maratona de Vendas Allvino com premiação, regras, ranking e importação discreta de Excel."
     />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Marcellus&family=Source+Sans+3:wght@400;600;700;800&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Marcellus&family=Source+Sans+3:wght@400;600;700;800;900&display=swap"
       rel="stylesheet"
     />
     <script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js" defer></script>
     <style>
       :root {
         color-scheme: light;
-        --page-bg: oklch(0.975 0.008 92);
-        --wine-ink: oklch(0.245 0.045 34);
-        --wine-ink-deep: oklch(0.18 0.035 34);
-        --wine-ink-soft: oklch(0.34 0.04 42);
-        --allvino-red: oklch(0.48 0.16 29);
-        --allvino-red-dark: oklch(0.39 0.13 29);
-        --copper-foil: oklch(0.67 0.095 74);
-        --label-paper: oklch(0.93 0.028 85);
-        --logo-white: oklch(0.985 0 0);
-        --cellar-mist: oklch(0.43 0.02 58);
-        --line-light: oklch(0.67 0.095 74 / 0.28);
-        --line-dark: oklch(0.67 0.095 74 / 0.36);
-        --surface: oklch(0.985 0.006 92);
-        --surface-red: oklch(0.48 0.16 29 / 0.1);
-        --shadow-short: 0 8px 18px oklch(0 0 0 / 0.18);
+        --paper: oklch(0.975 0.01 78);
+        --paper-deep: oklch(0.94 0.018 76);
+        --ink: oklch(0.19 0.018 55);
+        --ink-soft: oklch(0.35 0.018 55);
+        --red: oklch(0.42 0.15 27);
+        --red-deep: oklch(0.32 0.12 27);
+        --silver: oklch(0.55 0.006 80);
+        --line: oklch(0.73 0.04 63 / 0.46);
+        --white: oklch(0.99 0.004 82);
+        --success: oklch(0.38 0.1 145);
         --radius-sm: 4px;
         --radius-md: 8px;
         --radius-lg: 12px;
-        --container: min(1180px, calc(100vw - 32px));
+        --container: min(1040px, calc(100vw - 32px));
         --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
       }
 
@@ -52,29 +47,55 @@
         margin: 0;
         min-width: 320px;
         background:
-          linear-gradient(180deg, oklch(0.245 0.045 34 / 0.93) 0 620px, var(--page-bg) 620px),
-          var(--page-bg);
-        color: var(--wine-ink);
+          radial-gradient(circle at 50% -4%, oklch(1 0 0 / 0.96), transparent 30rem),
+          linear-gradient(110deg, transparent 0 23%, oklch(0.42 0.15 27 / 0.08) 23.1% 23.4%, transparent 23.5% 100%),
+          linear-gradient(70deg, transparent 0 74%, oklch(0.42 0.15 27 / 0.08) 74.1% 74.4%, transparent 74.5% 100%),
+          var(--paper);
+        color: var(--ink);
         font-family: "Source Sans 3", Verdana, sans-serif;
-        line-height: 1.65;
+        line-height: 1.5;
+      }
+
+      body::before,
+      body::after {
+        content: "";
+        position: fixed;
+        top: 0;
+        bottom: 0;
+        width: 24vw;
+        pointer-events: none;
+        opacity: 0.5;
+        z-index: -1;
+      }
+
+      body::before {
+        left: 0;
+        background:
+          linear-gradient(34deg, transparent 0 42%, oklch(0.2 0.01 55 / 0.09) 42.2% 42.5%, transparent 42.7%),
+          linear-gradient(28deg, transparent 0 47%, oklch(0.42 0.15 27 / 0.12) 47.1% 47.4%, transparent 47.6%),
+          linear-gradient(23deg, transparent 0 52%, oklch(0.2 0.01 55 / 0.08) 52.1% 52.4%, transparent 52.6%);
+      }
+
+      body::after {
+        right: 0;
+        background:
+          linear-gradient(146deg, transparent 0 43%, oklch(0.2 0.01 55 / 0.09) 43.2% 43.5%, transparent 43.7%),
+          linear-gradient(152deg, transparent 0 48%, oklch(0.42 0.15 27 / 0.12) 48.1% 48.4%, transparent 48.6%),
+          linear-gradient(157deg, transparent 0 53%, oklch(0.2 0.01 55 / 0.08) 53.1% 53.4%, transparent 53.6%);
       }
 
       a {
         color: inherit;
       }
 
-      img {
-        display: block;
-        max-width: 100%;
-      }
-
-      button {
+      button,
+      input {
         font: inherit;
       }
 
       :focus-visible {
-        outline: none;
-        box-shadow: 0 0 0 3px oklch(0.67 0.095 74 / 0.48);
+        outline: 3px solid oklch(0.67 0.095 74 / 0.58);
+        outline-offset: 3px;
       }
 
       .container {
@@ -82,464 +103,401 @@
         margin-inline: auto;
       }
 
-      .site-header {
-        position: sticky;
-        top: 0;
-        z-index: 10;
-        background: oklch(0.18 0.035 34 / 0.94);
-        border-bottom: 1px solid var(--line-dark);
-      }
-
-      .nav {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 1rem;
-        min-height: 74px;
-      }
-
-      .brand {
-        display: inline-flex;
-        align-items: center;
-        width: 168px;
-        min-height: 48px;
+      .page {
+        position: relative;
         overflow: hidden;
-      }
-
-      .brand img {
-        width: 220px;
-        margin-left: -24px;
-      }
-
-      .nav-links {
-        display: flex;
-        flex-wrap: wrap;
-        align-items: center;
-        justify-content: flex-end;
-        gap: clamp(0.85rem, 2.2vw, 1.6rem);
-        color: oklch(0.985 0 0 / 0.82);
-        font-size: 0.96rem;
-        font-weight: 700;
-      }
-
-      .nav-links a {
-        text-decoration: none;
-      }
-
-      .nav-links a:hover {
-        color: var(--copper-foil);
-      }
-
-      .button {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        min-height: 46px;
-        border-radius: var(--radius-md);
-        padding: 0.88rem 1.45rem;
-        font-weight: 800;
-        line-height: 1.1;
-        text-decoration: none;
-        transition: background-color 180ms var(--ease-out), color 180ms var(--ease-out), transform 180ms var(--ease-out);
-      }
-
-      .button:hover {
-        transform: translateY(-1px);
-      }
-
-      .button-primary {
-        background: var(--allvino-red);
-        color: var(--logo-white);
-      }
-
-      .button-primary:hover {
-        background: var(--allvino-red-dark);
-      }
-
-      .button-secondary {
-        border: 1px solid var(--line-dark);
-        color: var(--logo-white);
-      }
-
-      .button-secondary:hover {
-        background: oklch(0.67 0.095 74 / 0.14);
+        min-height: 100vh;
+        padding: clamp(2rem, 5vw, 4rem) 0 0;
       }
 
       .hero {
-        position: relative;
-        overflow: hidden;
-        padding: clamp(3rem, 7vw, 6.5rem) 0 clamp(3rem, 8vw, 7rem);
-        color: var(--logo-white);
+        text-align: center;
+        padding-bottom: clamp(2rem, 5vw, 4rem);
       }
 
-      .hero::before {
-        content: "";
-        position: absolute;
-        inset: 0;
-        background:
-          linear-gradient(90deg, oklch(0.18 0.035 34 / 0.96), oklch(0.245 0.045 34 / 0.82) 56%, oklch(0.245 0.045 34 / 0.36)),
-          url("https://images.unsplash.com/photo-1506377247377-2a5b3b417ebb?auto=format&fit=crop&w=1800&q=82") center / cover;
-        z-index: -2;
-      }
-
-      .hero::after {
-        content: "";
-        position: absolute;
-        right: -10vw;
-        bottom: -12rem;
-        width: min(52vw, 680px);
-        aspect-ratio: 1;
-        border-radius: 50%;
-        background: radial-gradient(circle, oklch(0.67 0.095 74 / 0.22), transparent 68%);
-        z-index: -1;
-      }
-
-      .hero-grid {
-        display: grid;
-        grid-template-columns: minmax(0, 1.05fr) minmax(300px, 0.95fr);
-        align-items: center;
-        gap: clamp(2.25rem, 5vw, 5rem);
-      }
-
-      .campaign-label {
+      .brand-logo {
         display: inline-flex;
-        align-items: center;
-        gap: 0.75rem;
-        margin: 0 0 1.2rem;
-        color: var(--copper-foil);
-        font-size: 0.84rem;
-        font-weight: 800;
+        align-items: baseline;
+        justify-content: center;
+        margin-inline: auto;
+        color: var(--ink);
+        font-family: Marcellus, Georgia, serif;
+        font-size: clamp(2.1rem, 6vw, 4.1rem);
         letter-spacing: 0.08em;
-        line-height: 1.2;
-        text-transform: uppercase;
+        line-height: 1;
       }
 
-      .campaign-label::before {
+      .brand-logo .brand-emphasis {
+        color: oklch(0.1 0.01 55);
+        font-weight: 400;
+      }
+
+      .brand-logo .brand-i {
+        position: relative;
+        display: inline-block;
+      }
+
+      .brand-logo .brand-i::before {
         content: "";
-        width: 36px;
-        height: 1px;
-        background: currentColor;
+        position: absolute;
+        left: 50%;
+        top: -0.34em;
+        width: 0.13em;
+        height: 0.42em;
+        border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+        background: var(--red);
+        transform: translateX(-50%);
       }
 
       h1,
       h2,
       h3 {
+        margin: 0;
         font-family: Marcellus, Georgia, serif;
         font-weight: 400;
         text-wrap: balance;
       }
 
-      h1 {
-        max-width: 11ch;
-        margin: 0;
-        font-size: clamp(3rem, 10vw, 5.75rem);
-        line-height: 0.95;
-        letter-spacing: -0.025em;
-      }
-
-      .hero-copy {
-        max-width: 62ch;
-        margin: 1.6rem 0 0;
-        color: oklch(0.985 0 0 / 0.86);
-        font-size: clamp(1.08rem, 2vw, 1.25rem);
-        text-wrap: pretty;
-      }
-
-      .hero-actions {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 0.8rem;
-        margin-top: 2rem;
-      }
-
-      .hero-facts {
+      .hero-title {
         display: grid;
-        grid-template-columns: repeat(3, minmax(0, 1fr));
-        gap: 1px;
-        max-width: 680px;
-        margin-top: 2.4rem;
-        overflow: hidden;
-        border: 1px solid var(--line-dark);
-        border-radius: var(--radius-lg);
-        background: var(--line-dark);
-      }
-
-      .hero-fact {
-        min-height: 98px;
-        padding: 1rem;
-        background: oklch(0.18 0.035 34 / 0.78);
-      }
-
-      .hero-fact strong {
-        display: block;
-        color: var(--logo-white);
-        font-size: clamp(1.18rem, 2vw, 1.55rem);
-        line-height: 1.05;
-      }
-
-      .hero-fact span {
-        display: block;
-        margin-top: 0.35rem;
-        color: oklch(0.985 0 0 / 0.68);
-        font-size: 0.9rem;
-      }
-
-      .bottle-stage {
-        position: relative;
-        min-height: 520px;
-      }
-
-      .bottle-stage::before {
-        content: "";
-        position: absolute;
-        inset: auto 5% 0;
-        height: 68%;
-        border: 1px solid var(--line-dark);
-        border-radius: var(--radius-lg);
-        background: linear-gradient(160deg, oklch(0.18 0.035 34 / 0.42), oklch(0.48 0.16 29 / 0.2));
-      }
-
-      .bottle-stage img {
-        position: absolute;
-        bottom: 0;
-        width: min(42vw, 255px);
-        max-height: 520px;
-        object-fit: contain;
-        filter: drop-shadow(0 16px 18px oklch(0 0 0 / 0.34));
-      }
-
-      .bottle-stage .secondary {
-        left: 6%;
-        width: min(34vw, 210px);
-        opacity: 0.88;
-      }
-
-      .bottle-stage .primary {
-        right: 10%;
-        z-index: 2;
-      }
-
-      .finish-note {
-        position: absolute;
-        right: 0;
-        top: 10%;
-        width: min(240px, 48vw);
-        padding: 1rem;
-        border: 1px solid var(--line-dark);
-        border-radius: var(--radius-md);
-        background: var(--label-paper);
-        color: var(--wine-ink);
-      }
-
-      .finish-note strong {
-        display: block;
-        color: var(--allvino-red);
-        font-size: 1.2rem;
-        line-height: 1.1;
-      }
-
-      .finish-note span {
-        display: block;
-        margin-top: 0.35rem;
-        color: var(--wine-ink-soft);
-        font-size: 0.95rem;
-      }
-
-      .section {
-        padding: clamp(3.5rem, 8vw, 7rem) 0;
-      }
-
-      .section-heading {
-        display: flex;
-        align-items: end;
-        justify-content: space-between;
-        gap: 2rem;
-        margin-bottom: clamp(1.8rem, 5vw, 3.5rem);
-      }
-
-      .section-heading h2 {
-        max-width: 13ch;
-        margin: 0;
-        font-size: clamp(2.2rem, 5vw, 4rem);
-        line-height: 1.02;
-        letter-spacing: -0.015em;
-      }
-
-      .section-heading p {
-        max-width: 54ch;
-        margin: 0;
-        color: var(--cellar-mist);
-        font-size: 1.06rem;
-        text-wrap: pretty;
-      }
-
-      .prize-layout {
-        display: grid;
-        grid-template-columns: minmax(0, 1.2fr) minmax(280px, 0.8fr);
-        gap: 1px;
-        overflow: hidden;
-        border: 1px solid var(--line-light);
-        border-radius: var(--radius-lg);
-        background: var(--line-light);
-      }
-
-      .prize-panel {
-        display: grid;
-        align-content: space-between;
-        min-height: 360px;
-        padding: clamp(1.4rem, 4vw, 3rem);
-        background: var(--wine-ink);
-        color: var(--logo-white);
-      }
-
-      .prize-panel:nth-child(2) {
-        min-height: auto;
-        background: var(--surface);
-        color: var(--wine-ink);
-      }
-
-      .prize-position {
-        margin: 0;
-        color: var(--copper-foil);
-        font-size: 0.88rem;
-        font-weight: 800;
-        letter-spacing: 0.08em;
+        gap: 0.2rem;
+        margin-top: clamp(1.3rem, 4vw, 2.2rem);
         text-transform: uppercase;
       }
 
-      .prize-panel h3 {
-        max-width: 12ch;
-        margin: 1.25rem 0 0;
-        font-size: clamp(2rem, 5vw, 3.8rem);
+      .hero-title .maratona {
+        color: var(--red);
+        font-size: clamp(4.2rem, 15vw, 6rem);
+        line-height: 0.86;
+        letter-spacing: -0.035em;
+      }
+
+      .hero-title .vendas {
+        color: var(--ink);
+        font-size: clamp(2.6rem, 9vw, 5rem);
+        line-height: 0.9;
+        letter-spacing: -0.02em;
+      }
+
+      .campaign-subtitle {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: clamp(0.75rem, 3vw, 2rem);
+        margin: clamp(1rem, 3vw, 1.4rem) auto 0;
+        color: var(--ink-soft);
+        font-size: clamp(1rem, 2.4vw, 1.45rem);
+        font-weight: 700;
+        letter-spacing: 0.14em;
+        line-height: 1.2;
+        text-transform: uppercase;
+      }
+
+      .campaign-subtitle::before,
+      .campaign-subtitle::after {
+        content: "";
+        width: min(120px, 18vw);
+        height: 1px;
+        background: var(--red);
+      }
+
+      .finish-ribbon {
+        position: relative;
+        height: 92px;
+        margin: clamp(1.2rem, 4vw, 2.2rem) auto 0;
+      }
+
+      .finish-ribbon::before {
+        content: "";
+        position: absolute;
+        left: 10%;
+        right: 10%;
+        top: 42px;
+        height: 16px;
+        border-radius: 50%;
+        background: linear-gradient(90deg, transparent, var(--red), oklch(0.55 0.14 27), var(--red), transparent);
+        transform: skewY(-2deg);
+      }
+
+      .runner {
+        position: absolute;
+        left: 50%;
+        top: 7px;
+        width: 58px;
+        height: 74px;
+        transform: translateX(-50%);
+      }
+
+      .runner::before {
+        content: "";
+        position: absolute;
+        left: 22px;
+        top: 0;
+        width: 14px;
+        height: 14px;
+        border-radius: 50%;
+        background: var(--silver);
+      }
+
+      .runner::after {
+        content: "";
+        position: absolute;
+        left: 26px;
+        top: 14px;
+        width: 7px;
+        height: 62px;
+        background:
+          linear-gradient(30deg, transparent 0 40%, var(--silver) 41% 52%, transparent 53%),
+          linear-gradient(150deg, transparent 0 40%, var(--silver) 41% 52%, transparent 53%),
+          linear-gradient(70deg, transparent 0 33%, var(--silver) 34% 43%, transparent 44%),
+          linear-gradient(110deg, transparent 0 33%, var(--silver) 34% 43%, transparent 44%),
+          linear-gradient(var(--silver), var(--silver));
+      }
+
+      .section-title {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: clamp(0.8rem, 3vw, 2rem);
+        color: var(--red);
+        font-family: "Source Sans 3", Verdana, sans-serif;
+        font-size: clamp(1.4rem, 4vw, 2.25rem);
+        font-weight: 900;
+        letter-spacing: 0.08em;
+        line-height: 1.1;
+        text-align: center;
+        text-transform: uppercase;
+      }
+
+      .section-title::before,
+      .section-title::after {
+        content: "";
+        width: min(170px, 20vw);
+        height: 1px;
+        background: var(--red);
+      }
+
+      .mechanics {
+        position: relative;
+        padding: clamp(0.5rem, 2vw, 1.25rem) 0 clamp(2.2rem, 5vw, 4rem);
+      }
+
+      .track-panel {
+        position: relative;
+        margin-top: clamp(1.4rem, 4vw, 2rem);
+      }
+
+      .track-road {
+        position: absolute;
+        left: max(-5vw, -64px);
+        top: 0;
+        bottom: -5rem;
+        width: min(300px, 34vw);
+        pointer-events: none;
+      }
+
+      .track-road::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        border-left: clamp(54px, 7vw, 86px) solid var(--red);
+        border-right: clamp(42px, 5vw, 64px) solid oklch(0.32 0.01 55);
+        border-radius: 50% 12% 10% 48% / 18% 10% 10% 52%;
+        transform: skewX(-11deg);
+        opacity: 0.92;
+      }
+
+      .track-road::after {
+        content: "";
+        position: absolute;
+        inset: 16px 36% 16px 18%;
+        border-left: 4px solid var(--white);
+        border-right: 4px solid var(--white);
+        border-radius: 50% 12% 10% 48% / 18% 10% 10% 52%;
+        transform: skewX(-11deg);
+        opacity: 0.88;
+      }
+
+      .prize-list {
+        position: relative;
+        z-index: 1;
+        display: grid;
+        gap: clamp(0.95rem, 2.5vw, 1.35rem);
+        width: min(760px, 100%);
+        margin-left: auto;
+      }
+
+      .prize-card {
+        display: grid;
+        grid-template-columns: minmax(120px, 0.36fr) 1px minmax(0, 1fr);
+        align-items: center;
+        gap: clamp(1rem, 3vw, 2rem);
+        min-height: 174px;
+        border: 1px solid var(--line);
+        border-radius: var(--radius-lg);
+        background: oklch(0.99 0.004 82 / 0.92);
+        box-shadow: 0 4px 10px oklch(0.2 0.03 50 / 0.14);
+        padding: clamp(1rem, 3vw, 1.65rem);
+      }
+
+      .place {
+        display: grid;
+        justify-items: center;
+        color: var(--red);
+        line-height: 0.9;
+        text-align: center;
+      }
+
+      .prize-card:nth-child(2) .place {
+        color: var(--ink);
+      }
+
+      .place strong {
+        font-family: Marcellus, Georgia, serif;
+        font-size: clamp(4rem, 10vw, 5.8rem);
+        font-weight: 400;
+        letter-spacing: -0.04em;
+      }
+
+      .place span {
+        font-size: clamp(1.15rem, 3vw, 1.5rem);
+        font-weight: 900;
+        letter-spacing: 0.02em;
+        text-transform: uppercase;
+      }
+
+      .divider {
+        align-self: stretch;
+        width: 1px;
+        background: var(--line);
+      }
+
+      .prize-copy {
+        display: grid;
+        gap: 0.7rem;
+        text-align: left;
+      }
+
+      .prize-copy p {
+        margin: 0;
+        color: var(--ink);
+        font-size: clamp(1.1rem, 3vw, 1.55rem);
+        font-weight: 700;
+        line-height: 1.13;
+      }
+
+      .prize-copy b {
+        color: var(--red);
+        font-size: 1.18em;
+      }
+
+      .award {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 0.6rem;
+        border-top: 1px solid var(--line);
+        padding-top: 0.7rem;
+        color: var(--red);
+        font-size: clamp(1.05rem, 2.6vw, 1.35rem);
+        font-weight: 800;
+        line-height: 1.15;
+      }
+
+      .award::before {
+        content: "◆";
+        color: currentColor;
+        font-size: 1.7rem;
         line-height: 1;
       }
 
-      .prize-panel p {
-        max-width: 56ch;
-        margin: 1.2rem 0 0;
-        color: oklch(0.985 0 0 / 0.76);
-      }
-
-      .prize-panel:nth-child(2) p {
-        color: var(--cellar-mist);
-      }
-
-      .prize-amount {
-        display: inline-flex;
-        width: fit-content;
-        margin-top: 2rem;
-        border-radius: var(--radius-md);
-        background: var(--allvino-red);
-        color: var(--logo-white);
-        padding: 0.75rem 1rem;
-        font-size: clamp(1.2rem, 3vw, 1.8rem);
+      .award strong {
+        color: var(--ink);
+        font-size: 1.25em;
         font-weight: 900;
-        line-height: 1.1;
       }
 
-      .rules-band {
-        background: var(--wine-ink-deep);
-        color: var(--logo-white);
-      }
-
-      .rules-grid {
+      .rules {
         display: grid;
-        grid-template-columns: minmax(260px, 0.85fr) minmax(0, 1.15fr);
-        gap: clamp(2rem, 5vw, 4rem);
-        align-items: start;
+        grid-template-columns: minmax(88px, 132px) minmax(0, 1fr);
+        gap: clamp(1rem, 3vw, 2rem);
+        align-items: center;
+        width: min(760px, 100%);
+        margin: clamp(1.5rem, 4vw, 2.4rem) 0 0 auto;
       }
 
-      .rules-grid h2 {
-        margin: 0;
-        font-size: clamp(2.2rem, 5vw, 4rem);
-        line-height: 1.03;
-      }
-
-      .rules-grid p {
-        margin: 1.1rem 0 0;
-        color: oklch(0.985 0 0 / 0.7);
-      }
-
-      .rules-list {
-        display: grid;
-        gap: 1px;
-        margin: 0;
-        padding: 0;
-        list-style: none;
-        overflow: hidden;
-        border: 1px solid var(--line-dark);
-        border-radius: var(--radius-lg);
-        background: var(--line-dark);
-      }
-
-      .rules-list li {
-        display: grid;
-        grid-template-columns: auto 1fr;
-        gap: 1rem;
-        align-items: start;
-        padding: clamp(1rem, 3vw, 1.35rem);
-        background: oklch(0.245 0.045 34 / 0.84);
-      }
-
-      .rule-number {
+      .flag-icon {
         display: grid;
         place-items: center;
-        width: 34px;
-        height: 34px;
+        aspect-ratio: 1;
+        border: 2px solid var(--red);
         border-radius: 50%;
-        background: var(--copper-foil);
-        color: var(--wine-ink);
-        font-weight: 900;
-        line-height: 1;
+        color: var(--red);
+        font-size: clamp(2.5rem, 8vw, 4.5rem);
       }
 
-      .rules-list strong {
-        color: var(--logo-white);
+      .flag-icon::before {
+        content: "⚑";
       }
 
-      .rules-list span {
-        display: block;
-        color: oklch(0.985 0 0 / 0.74);
+      .rule-copy {
+        display: grid;
+        gap: 0.9rem;
+        color: var(--ink);
+        font-size: clamp(1.05rem, 2.5vw, 1.35rem);
+        line-height: 1.2;
+      }
+
+      .rule-copy p {
+        margin: 0;
+      }
+
+      .rule-copy strong {
+        color: var(--red);
+      }
+
+      .ranking-section {
+        padding: clamp(1.5rem, 5vw, 4rem) 0 clamp(3rem, 7vw, 5rem);
       }
 
       .ranking-shell {
         display: grid;
-        grid-template-columns: minmax(0, 1fr) minmax(260px, 0.36fr);
-        gap: clamp(1.5rem, 4vw, 3rem);
-        align-items: start;
+        grid-template-columns: minmax(0, 1fr) minmax(240px, 0.34fr);
+        gap: clamp(1rem, 3vw, 1.6rem);
+        margin-top: clamp(1.4rem, 4vw, 2rem);
       }
 
-      .ranking-panel {
-        overflow: hidden;
-        border: 1px solid var(--line-light);
+      .ranking-panel,
+      .ranking-guide {
+        border: 1px solid var(--line);
         border-radius: var(--radius-lg);
-        background: var(--surface);
+        background: oklch(0.99 0.004 82 / 0.9);
+        box-shadow: 0 4px 10px oklch(0.2 0.03 50 / 0.1);
+        overflow: hidden;
       }
 
       .ranking-topbar {
         display: flex;
+        flex-wrap: wrap;
         align-items: center;
         justify-content: space-between;
-        gap: 1rem;
-        padding: clamp(1.1rem, 3vw, 1.6rem);
-        border-bottom: 1px solid var(--line-light);
+        gap: 0.8rem;
+        padding: clamp(1rem, 3vw, 1.4rem);
+        border-bottom: 1px solid var(--line);
       }
 
       .ranking-topbar h3 {
-        margin: 0;
-        font-size: clamp(1.6rem, 3vw, 2.2rem);
-        line-height: 1.05;
+        color: var(--red);
+        font-family: "Source Sans 3", Verdana, sans-serif;
+        font-size: clamp(1.3rem, 3vw, 1.75rem);
+        font-weight: 900;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
       }
 
       .ranking-status {
-        display: inline-flex;
-        align-items: center;
-        min-height: 34px;
-        border-radius: var(--radius-sm);
-        background: var(--surface-red);
-        color: var(--allvino-red-dark);
-        padding: 0.42rem 0.7rem;
-        font-size: 0.9rem;
+        color: var(--ink-soft);
+        font-size: 0.95rem;
         font-weight: 800;
       }
 
@@ -548,17 +506,17 @@
         gap: 1px;
         margin: 0;
         padding: 0;
+        background: var(--line);
         list-style: none;
-        background: var(--line-light);
       }
 
       .ranking-item {
         display: grid;
         grid-template-columns: auto minmax(0, 1fr) auto;
-        gap: clamp(0.8rem, 2vw, 1.2rem);
+        gap: clamp(0.75rem, 2vw, 1rem);
         align-items: center;
-        padding: clamp(1rem, 2.5vw, 1.45rem);
-        background: var(--surface);
+        padding: clamp(0.9rem, 2.4vw, 1.2rem);
+        background: var(--white);
       }
 
       .rank-position {
@@ -567,112 +525,103 @@
         width: 42px;
         height: 42px;
         border-radius: 50%;
-        background: var(--label-paper);
-        color: var(--wine-ink);
+        background: var(--red);
+        color: var(--white);
         font-weight: 900;
-        font-variant-numeric: tabular-nums;
       }
 
-      .ranking-item:first-child .rank-position {
-        background: var(--copper-foil);
+      .ranking-item:nth-child(n + 2) .rank-position {
+        background: oklch(0.32 0.01 55);
       }
 
       .rank-main {
         display: grid;
-        gap: 0.55rem;
+        gap: 0.46rem;
       }
 
       .rank-row {
         display: flex;
         flex-wrap: wrap;
         justify-content: space-between;
-        gap: 0.5rem 1rem;
+        gap: 0.45rem 1rem;
       }
 
-      .rank-name {
-        color: var(--wine-ink);
-        font-size: 1.2rem;
+      .rank-name,
+      .rank-value {
+        font-size: clamp(1rem, 2.4vw, 1.18rem);
         font-weight: 900;
-        line-height: 1.1;
       }
 
       .rank-value {
-        color: var(--allvino-red);
-        font-size: 1.08rem;
-        font-weight: 900;
+        color: var(--red);
         font-variant-numeric: tabular-nums;
       }
 
       .progress-track {
         overflow: hidden;
-        height: 9px;
+        height: 8px;
         border-radius: var(--radius-sm);
-        background: oklch(0.245 0.045 34 / 0.1);
+        background: oklch(0.2 0.01 55 / 0.12);
       }
 
       .progress-bar {
         display: block;
         width: var(--progress);
         height: 100%;
-        background: linear-gradient(90deg, var(--allvino-red), var(--copper-foil));
         border-radius: inherit;
+        background: linear-gradient(90deg, var(--red), oklch(0.66 0.1 55));
       }
 
       .rank-note {
         margin: 0;
-        color: var(--cellar-mist);
-        font-size: 0.92rem;
+        color: var(--ink-soft);
+        font-size: 0.9rem;
       }
 
       .rank-badge {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
         min-width: 118px;
-        border: 1px solid var(--line-light);
+        border: 1px solid var(--line);
         border-radius: var(--radius-md);
-        padding: 0.58rem 0.7rem;
-        color: var(--wine-ink-soft);
-        font-size: 0.86rem;
+        padding: 0.54rem 0.68rem;
+        color: var(--ink-soft);
+        font-size: 0.84rem;
         font-weight: 800;
         text-align: center;
       }
 
       .ranking-guide {
         display: grid;
-        gap: 1px;
-        overflow: hidden;
-        border: 1px solid var(--line-light);
-        border-radius: var(--radius-lg);
-        background: var(--line-light);
+        align-content: start;
       }
 
       .guide-item {
-        padding: 1.2rem;
-        background: var(--wine-ink);
-        color: var(--logo-white);
+        padding: 1.15rem;
       }
 
-      .guide-item:nth-child(2) {
-        background: var(--allvino-red);
+      .guide-item + .guide-item {
+        border-top: 1px solid var(--line);
       }
 
       .guide-item strong {
         display: block;
-        font-size: clamp(1.45rem, 3vw, 2rem);
-        line-height: 1.05;
+        color: var(--red);
+        font-family: Marcellus, Georgia, serif;
+        font-size: clamp(2rem, 5vw, 3rem);
+        font-weight: 400;
+        line-height: 1;
       }
 
       .guide-item span {
         display: block;
         margin-top: 0.45rem;
-        color: oklch(0.985 0 0 / 0.72);
+        color: var(--ink-soft);
+        font-weight: 700;
       }
 
       .site-footer {
-        padding: 2rem 0;
-        border-top: 1px solid var(--line-light);
-        color: var(--cellar-mist);
+        border-top: 1px solid var(--line);
+        padding: 1.5rem 0 2rem;
+        color: var(--ink-soft);
       }
 
       .footer-row {
@@ -687,28 +636,24 @@
         gap: 0.15rem;
       }
 
-      .footer-copy span {
-        line-height: 1.35;
-      }
-
       .ranking-import {
         width: min(420px, 100%);
-        border: 1px solid var(--line-light);
+        border: 1px solid var(--line);
         border-radius: var(--radius-md);
-        background: var(--surface);
+        background: var(--white);
       }
 
       .ranking-import summary {
         min-height: 42px;
         cursor: pointer;
         padding: 0.65rem 0.85rem;
-        color: var(--wine-ink);
-        font-weight: 800;
+        color: var(--ink);
+        font-weight: 900;
         list-style-position: inside;
       }
 
       .ranking-import summary::marker {
-        color: var(--copper-foil);
+        color: var(--red);
       }
 
       .import-content {
@@ -720,27 +665,26 @@
       .import-help,
       .import-status {
         margin: 0;
-        color: var(--cellar-mist);
+        color: var(--ink-soft);
         font-size: 0.92rem;
         line-height: 1.45;
       }
 
       .import-status.is-error {
-        color: var(--allvino-red-dark);
+        color: var(--red-deep);
       }
 
       .import-status.is-success {
-        color: oklch(0.38 0.1 145);
+        color: var(--success);
       }
 
       .file-input {
         width: 100%;
-        border: 1px solid var(--line-light);
+        border: 1px solid var(--line);
         border-radius: var(--radius-sm);
-        background: var(--logo-white);
-        color: var(--wine-ink);
+        background: var(--white);
+        color: var(--ink);
         padding: 0.72rem;
-        font: inherit;
       }
 
       .import-actions {
@@ -751,76 +695,67 @@
 
       .footer-button {
         min-height: 38px;
-        border: 1px solid var(--line-light);
+        border: 1px solid var(--line);
         border-radius: var(--radius-sm);
         background: transparent;
-        color: var(--wine-ink);
+        color: var(--ink);
         cursor: pointer;
         padding: 0.55rem 0.75rem;
-        font-weight: 800;
+        font-weight: 900;
       }
 
       .footer-button:hover {
-        border-color: var(--copper-foil);
+        border-color: var(--red);
       }
 
-      @media (max-width: 900px) {
-        .hero-grid,
-        .prize-layout,
-        .rules-grid,
+      @media (max-width: 860px) {
+        .prize-card,
         .ranking-shell {
           grid-template-columns: 1fr;
         }
 
-        .bottle-stage {
-          min-height: 440px;
+        .divider {
+          display: none;
         }
 
-        .section-heading {
-          display: grid;
+        .track-road {
+          opacity: 0.22;
+          width: 46vw;
+        }
+
+        .rules {
+          grid-template-columns: 1fr;
+          justify-items: center;
+          text-align: center;
         }
       }
 
-      @media (max-width: 680px) {
-        .nav {
-          align-items: flex-start;
-          flex-direction: column;
-          padding: 0.85rem 0;
+      @media (max-width: 620px) {
+        .page {
+          padding-top: 1.5rem;
         }
 
-        .nav-links {
-          justify-content: flex-start;
+        .campaign-subtitle {
+          letter-spacing: 0.08em;
         }
 
-        .hero-facts {
-          grid-template-columns: 1fr;
+        .campaign-subtitle::before,
+        .campaign-subtitle::after,
+        .section-title::before,
+        .section-title::after {
+          width: 42px;
         }
 
-        .bottle-stage {
-          min-height: 380px;
+        .prize-copy {
+          text-align: center;
         }
 
-        .bottle-stage .secondary {
-          left: 0;
-          width: 42vw;
-        }
-
-        .bottle-stage .primary {
-          right: 0;
-          width: 50vw;
-        }
-
-        .finish-note {
-          top: 0;
-          width: min(220px, 64vw);
-        }
-
-        .ranking-topbar,
-        .ranking-item {
-          grid-template-columns: 1fr;
+        .award {
+          justify-content: center;
         }
 
         .ranking-item {
+          grid-template-columns: 1fr;
           align-items: start;
         }
 
@@ -840,177 +775,114 @@
     </style>
   </head>
   <body>
-    <header class="site-header">
-      <nav class="nav container" aria-label="Navegação principal">
-        <a class="brand" href="#topo" aria-label="Allvino - Maratona de Vendas">
-          <img src="assets/allvino-logo-white.original.png" alt="Allvino" />
-        </a>
-        <div class="nav-links" aria-label="Seções da página">
-          <a href="#premiacao">Premiação</a>
-          <a href="#regras">Regras</a>
-          <a href="#ranking">Ranking</a>
+    <div class="page">
+      <header class="hero container" id="topo">
+        <div class="brand-logo" aria-label="Allvino">
+          <span>ALL</span><span class="brand-emphasis">V</span><span class="brand-emphasis brand-i">I</span><span class="brand-emphasis">NO</span>
         </div>
-      </nav>
-    </header>
+        <h1 class="hero-title">
+          <span class="maratona">Maratona</span>
+          <span class="vendas">de vendas</span>
+        </h1>
+        <p class="campaign-subtitle">Campanha para representantes</p>
+        <div class="finish-ribbon" aria-hidden="true">
+          <span class="runner"></span>
+        </div>
+      </header>
 
-    <main id="topo">
-      <section class="hero" aria-labelledby="hero-title">
-        <div class="hero-grid container">
-          <div>
-            <p class="campaign-label">01/07/2026 a 31/12/2026</p>
-            <h1 id="hero-title">Maratona de vendas</h1>
-            <p class="hero-copy">
-              Aumente suas vendas durante o último semestre do ano e dispute uma premiação via Pix, direto na sua conta.
-              Quem atingir primeiro um dos gatilhos cruza a linha de chegada.
-            </p>
-            <div class="hero-actions">
-              <a class="button button-primary" href="#ranking">Ver ranking</a>
-              <a class="button button-secondary" href="#regras">Conferir regras</a>
+      <main>
+        <section class="mechanics" aria-labelledby="funciona-title">
+          <div class="container">
+            <h2 class="section-title" id="funciona-title">Como funciona</h2>
+            <div class="track-panel">
+              <div class="track-road" aria-hidden="true"></div>
+              <div class="prize-list">
+                <article class="prize-card">
+                  <div class="place">
+                    <strong>1º</strong>
+                    <span>Lugar</span>
+                  </div>
+                  <span class="divider" aria-hidden="true"></span>
+                  <div class="prize-copy">
+                    <p>Vender no acumulado de <strong>01/07/2026 até 31/12/2026</strong> o total: <b>R$ 480.000,00</b></p>
+                    <div class="award">Premiação: <strong>R$ 10.000,00</strong> no Pix</div>
+                  </div>
+                </article>
+
+                <article class="prize-card">
+                  <div class="place">
+                    <strong>2º</strong>
+                    <span>Lugar</span>
+                  </div>
+                  <span class="divider" aria-hidden="true"></span>
+                  <div class="prize-copy">
+                    <p>Vender no acumulado de <strong>01/07/2026 até 31/12/2026</strong> o total: <b>R$ 240.000,00</b></p>
+                    <div class="award">Premiação: <strong>R$ 5.000,00</strong> no Pix</div>
+                  </div>
+                </article>
+
+                <div class="rules" aria-label="Regras da premiação">
+                  <div class="flag-icon" aria-hidden="true"></div>
+                  <div class="rule-copy">
+                    <p>Para ativar a premiação, o representante deverá atingir o gatilho, que é a <strong>linha de chegada.</strong></p>
+                    <p>O representante que atingir um dos gatilhos <strong>primeiro, ganha.</strong></p>
+                    <p>As premiações <strong>não são acumulativas.</strong></p>
+                  </div>
+                </div>
+              </div>
             </div>
-            <div class="hero-facts" aria-label="Resumo da campanha">
-              <div class="hero-fact">
-                <strong>R$ 480 mil</strong>
-                <span>gatilho do 1º lugar</span>
-              </div>
-              <div class="hero-fact">
-                <strong>R$ 240 mil</strong>
-                <span>gatilho do 2º lugar</span>
-              </div>
-              <div class="hero-fact">
-                <strong>Pix</strong>
-                <span>premiação direta em conta</span>
-              </div>
+          </div>
+        </section>
+
+        <section class="ranking-section" id="ranking" aria-labelledby="ranking-title">
+          <div class="container">
+            <h2 class="section-title" id="ranking-title">Ranking de vendas</h2>
+            <div class="ranking-shell">
+              <section class="ranking-panel" aria-label="Ranking de representantes">
+                <div class="ranking-topbar">
+                  <h3>Representantes</h3>
+                  <span class="ranking-status" id="ranking-status">Aguardando atualização oficial</span>
+                </div>
+                <ol class="ranking-list" id="ranking-list"></ol>
+              </section>
+
+              <aside class="ranking-guide" aria-label="Gatilhos da campanha">
+                <div class="guide-item">
+                  <strong>R$ 480 mil</strong>
+                  <span>alvo para disputar R$ 10.000,00 no Pix</span>
+                </div>
+                <div class="guide-item">
+                  <strong>R$ 240 mil</strong>
+                  <span>alvo para disputar R$ 5.000,00 no Pix</span>
+                </div>
+              </aside>
             </div>
           </div>
+        </section>
+      </main>
 
-          <div class="bottle-stage" aria-label="Vinhos do portfólio Allvino">
-            <img class="secondary" src="assets/casa-del-puente-malbec.png" alt="Casa del Puente Premium Malbec" />
-            <img class="primary" src="assets/hinojosa-malbec.png" alt="Hinojosa Gran Reserva Malbec 2022" />
-            <div class="finish-note">
-              <strong>Linha de chegada</strong>
-              <span>O primeiro representante a bater o gatilho leva a premiação correspondente.</span>
+      <footer class="site-footer">
+        <div class="footer-row container">
+          <div class="footer-copy">
+            <span>Allvino · Maratona de Vendas 2026</span>
+            <span>Faturamento acumulado de 01/07/2026 a 31/12/2026</span>
+          </div>
+          <details class="ranking-import">
+            <summary>Atualizar ranking</summary>
+            <div class="import-content">
+              <p class="import-help">
+                Importe uma planilha com as colunas <strong>Representante</strong> e <strong>Valor</strong> ou <strong>Faturamento</strong>.
+              </p>
+              <input class="file-input" id="ranking-file" type="file" accept=".xlsx,.xls,.csv,text/csv" />
+              <div class="import-actions">
+                <button class="footer-button" type="button" id="clear-ranking">Limpar atualização</button>
+              </div>
+              <p class="import-status" id="import-status" role="status">Pronto para receber a planilha.</p>
             </div>
-          </div>
+          </details>
         </div>
-      </section>
-
-      <section class="section" id="premiacao" aria-labelledby="premiacao-title">
-        <div class="container">
-          <div class="section-heading">
-            <h2 id="premiacao-title">Premiação da maratona</h2>
-            <p>
-              Dois gatilhos, duas recompensas e uma regra simples: vender no acumulado do período e chegar primeiro.
-              As premiações não são acumulativas.
-            </p>
-          </div>
-          <div class="prize-layout">
-            <article class="prize-panel">
-              <div>
-                <p class="prize-position">1º lugar</p>
-                <h3>Gatilho de R$ 480.000,00</h3>
-                <p>
-                  Vender no acumulado de 01/07/2026 até 31/12/2026 o total de R$ 480.000,00.
-                </p>
-              </div>
-              <strong class="prize-amount">R$ 10.000,00 no Pix</strong>
-            </article>
-            <article class="prize-panel">
-              <div>
-                <p class="prize-position">2º lugar</p>
-                <h3>Gatilho de R$ 240.000,00</h3>
-                <p>
-                  Vender no acumulado de 01/07/2026 até 31/12/2026 o total de R$ 240.000,00.
-                </p>
-              </div>
-              <strong class="prize-amount">R$ 5.000,00 no Pix</strong>
-            </article>
-          </div>
-        </div>
-      </section>
-
-      <section class="section rules-band" id="regras" aria-labelledby="regras-title">
-        <div class="rules-grid container">
-          <div>
-            <h2 id="regras-title">Regras para ativar a premiação</h2>
-            <p>
-              A corrida considera o faturamento acumulado no período da campanha. O ranking serve para acompanhar a
-              distância de cada representante até a linha de chegada.
-            </p>
-          </div>
-          <ol class="rules-list">
-            <li>
-              <span class="rule-number">1</span>
-              <span><strong>Período válido:</strong> vendas acumuladas de 01/07/2026 até 31/12/2026.</span>
-            </li>
-            <li>
-              <span class="rule-number">2</span>
-              <span><strong>Ativação:</strong> o representante precisa atingir um dos gatilhos, que é a linha de chegada.</span>
-            </li>
-            <li>
-              <span class="rule-number">3</span>
-              <span><strong>Critério de vitória:</strong> o representante que atingir um dos gatilhos primeiro, ganha.</span>
-            </li>
-            <li>
-              <span class="rule-number">4</span>
-              <span><strong>Acúmulo:</strong> as premiações não são acumulativas.</span>
-            </li>
-          </ol>
-        </div>
-      </section>
-
-      <section class="section" id="ranking" aria-labelledby="ranking-title">
-        <div class="container">
-          <div class="section-heading">
-            <h2 id="ranking-title">Ranking de vendas</h2>
-            <p>
-              Acompanhe o faturamento acumulado dos representantes e a distância de cada um até os gatilhos da
-              premiação.
-            </p>
-          </div>
-          <div class="ranking-shell">
-            <section class="ranking-panel" aria-label="Ranking de representantes">
-              <div class="ranking-topbar">
-                <h3>Representantes</h3>
-                <span class="ranking-status" id="ranking-status">Aguardando atualização oficial</span>
-              </div>
-              <ol class="ranking-list" id="ranking-list"></ol>
-            </section>
-            <aside class="ranking-guide" aria-label="Gatilhos da campanha">
-              <div class="guide-item">
-                <strong>R$ 480 mil</strong>
-                <span>alvo para disputar R$ 10.000,00 no Pix</span>
-              </div>
-              <div class="guide-item">
-                <strong>R$ 240 mil</strong>
-                <span>alvo para disputar R$ 5.000,00 no Pix</span>
-              </div>
-            </aside>
-          </div>
-        </div>
-      </section>
-    </main>
-
-    <footer class="site-footer">
-      <div class="footer-row container">
-        <div class="footer-copy">
-          <span>Allvino · Maratona de Vendas 2026</span>
-          <span>Faturamento acumulado de 01/07/2026 a 31/12/2026</span>
-        </div>
-        <details class="ranking-import">
-          <summary>Atualizar ranking</summary>
-          <div class="import-content">
-            <p class="import-help">
-              Importe uma planilha com as colunas <strong>Representante</strong> e <strong>Valor</strong> ou <strong>Faturamento</strong>.
-            </p>
-            <input class="file-input" id="ranking-file" type="file" accept=".xlsx,.xls,.csv,text/csv" />
-            <div class="import-actions">
-              <button class="footer-button" type="button" id="clear-ranking">Limpar atualização</button>
-            </div>
-            <p class="import-status" id="import-status" role="status">Pronto para receber a planilha.</p>
-          </div>
-        </details>
-      </div>
-    </footer>
+      </footer>
+    </div>
 
     <script>
       const defaultRepresentatives = [
